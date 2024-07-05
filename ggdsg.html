@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Telegram Web App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Извлечение initData из URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const initDataEncoded = urlParams.get('initData');
+            if (!initDataEncoded) {
+                console.error('initData не найдены в URL');
+                return;
+            }
+        
+            // Декодирование и парсинг initData
+            try {
+                const initData = JSON.parse(decodeURIComponent(initDataEncoded));
+        
+                // Извлечение TG ID из initData
+                const tgUserId = initData.user.id;
+        
+                // Отправка TG ID на сервер
+                sendDataToServer(tgUserId);
+            } catch (error) {
+                console.error('Ошибка при обработке initData:', error);
+            }
+        });
+        
+        // Функция для отправки данных на сервер
+        function sendDataToServer(tgUserId) {
+            // Здесь должен быть ваш URL сервера
+            const serverUrl = 'https://b65a-89-22-177-227.ngrok-free.app/api/receive_tg_id';
+        
+            // Создание запроса для отправки TG ID
+            fetch(serverUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ tgUserId: tgUserId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Данные успешно отправлены:', data);
+            })
+            .catch((error) => {
+                console.error('Ошибка при отправке данных:', error);
+            });
+        }
+    </script>
+</body>
+</html>
